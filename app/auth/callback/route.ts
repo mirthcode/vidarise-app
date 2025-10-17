@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
+  const origin = requestUrl.origin;
 
   if (code) {
     const supabase = await createClient();
@@ -23,20 +24,20 @@ export async function GET(request: Request) {
         .single();
 
       if (!profile) {
-        // New OAuth user - create profile with pending role from localStorage
-        // We'll handle this on the client side by redirecting to profile creation
-        return NextResponse.redirect(new URL("/profile/create", requestUrl.origin));
+        // New OAuth user - redirect to a page that will handle profile creation
+        // The client-side will read localStorage for pending_role and pending_program
+        return NextResponse.redirect(new URL("/auth/callback/complete", origin));
       } else if (!profile.profile_completed) {
         // Profile exists but not completed - redirect to complete it
-        return NextResponse.redirect(new URL(`/profile/create?role=${profile.role}`, requestUrl.origin));
+        return NextResponse.redirect(new URL(`/profile/create?role=${profile.role}`, origin));
       } else if (profile.role === "admin") {
-        return NextResponse.redirect(new URL("/admin", requestUrl.origin));
+        return NextResponse.redirect(new URL("/admin", origin));
       } else {
-        return NextResponse.redirect(new URL("/dashboard", requestUrl.origin));
+        return NextResponse.redirect(new URL("/dashboard", origin));
       }
     }
   }
 
   // Return the user to an error page with instructions
-  return NextResponse.redirect(new URL("/auth/login", requestUrl.origin));
+  return NextResponse.redirect(new URL("/auth/login", origin));
 }

@@ -6,9 +6,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b border-brand-slate-gray/50 sticky top-0 backdrop-blur-lg bg-brand-dark-navy/80 z-50">
-        <div className="container mx-auto px-4 py-1 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity my-1">
-            <div className="relative w-[650px] h-[90px] overflow-hidden">
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <div className="relative w-32 h-8 sm:w-40 sm:h-10 md:w-64 md:h-12 lg:w-80 lg:h-14 overflow-hidden">
               <Image
                 src="/logo-horizontal-transparent.png"
                 alt="VidaRise"
@@ -25,16 +25,16 @@ export default function Home() {
               />
             </div>
           </Link>
-          <nav className="flex gap-4">
+          <nav className="flex gap-2 sm:gap-4">
             <Link
               href="/auth/login"
-              className="text-brand-cool-gray hover:text-white transition-colors px-4 py-2"
+              className="text-brand-cool-gray hover:text-white transition-colors px-2 py-2 text-sm sm:px-4 sm:text-base"
             >
               Login
             </Link>
             <Link
               href="/auth/signup"
-              className="btn-primary"
+              className="btn-primary text-sm sm:text-base px-3 py-2 sm:px-4"
             >
               Get Started
             </Link>
@@ -50,11 +50,11 @@ export default function Home() {
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/10 blur-[120px] rounded-full"></div>
           </div>
 
-          <div className="relative container mx-auto px-4 py-24 md:py-32 text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-brand-cool-gray bg-clip-text text-transparent">
+          <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32 text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-brand-cool-gray bg-clip-text text-transparent">
               Rise in Life
             </h1>
-            <p className="text-xl md:text-2xl text-brand-cool-gray mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-xl md:text-2xl text-brand-cool-gray mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-2">
               Create a program space for your organization, match people with mentors, and track progress – all in one place.
             </p>
             <Link
@@ -67,13 +67,13 @@ export default function Home() {
         </section>
 
         {/* Main Callout */}
-        <section className="py-16 bg-brand-charcoal/30">
+        <section className="py-12 sm:py-16 bg-brand-charcoal/30">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-2">
                 Mentorship at Scale
               </h2>
-              <p className="text-lg text-brand-cool-gray leading-relaxed">
+              <p className="text-base sm:text-lg text-brand-cool-gray leading-relaxed px-2">
                 VidaRise makes it simple to run mentorship that actually works. Organizers create a dedicated program space, mentors set their capacity and focus areas, mentees share goals, and everyone follows clear milestones from first meeting to outcomes.
               </p>
             </div>
@@ -81,9 +81,9 @@ export default function Home() {
         </section>
 
         {/* Three Pillars */}
-        <section className="py-16">
+        <section className="py-12 sm:py-16">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
               {/* For Mentees */}
               <div className="card group hover:border-brand-cobalt-blue/50 transition-all text-center">
                 <div className="w-12 h-12 rounded-full bg-brand-cobalt-blue/10 flex items-center justify-center mb-4 group-hover:bg-brand-cobalt-blue/20 transition-all mx-auto">
@@ -127,18 +127,18 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 bg-brand-charcoal/30">
+        <section className="py-12 sm:py-16 bg-brand-charcoal/30">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
                 Features That Make Mentorship Simple
               </h2>
-              <p className="text-xl text-brand-cool-gray max-w-3xl mx-auto">
+              <p className="text-base sm:text-xl text-brand-cool-gray max-w-3xl mx-auto px-2">
                 VidaRise removes friction so programs launch fast and stays on track.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto">
               {/* Program Spaces */}
               <div className="card group hover:border-brand-cobalt-blue/50 transition-all text-center">
                 <div className="w-10 h-10 rounded-lg bg-brand-cobalt-blue/10 flex items-center justify-center mb-4 group-hover:bg-brand-cobalt-blue/20 transition-all mx-auto">
@@ -221,13 +221,13 @@ export default function Home() {
         </section>
 
         {/* About Section */}
-        <section className="py-16">
+        <section className="py-12 sm:py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 text-center px-2">
                 About VidaRise
               </h2>
-              <p className="text-lg text-brand-cool-gray leading-relaxed text-center">
+              <p className="text-base sm:text-lg text-brand-cool-gray leading-relaxed text-center px-2">
                 VidaRise is a mentorship platform for organizations that need structure and scale. Create a program space, invite mentors and mentees, streamline matching, and track meetings and reflections. Participants sign in from the main page and access the programs they belong to.
               </p>
             </div>
@@ -235,17 +235,17 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-brand-cobalt-blue/10 to-cyan-500/10">
+        <section className="py-12 sm:py-20 bg-gradient-to-br from-brand-cobalt-blue/10 to-cyan-500/10">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 px-2">
               Ready to start your mentorship journey?
             </h2>
-            <p className="text-lg text-brand-cool-gray mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-brand-cool-gray mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
               Join VidaRise today and experience mentorship that actually works.
             </p>
             <Link
               href="/auth/signup"
-              className="btn-primary text-lg px-10 py-4 inline-block shadow-lg shadow-brand-cobalt-blue/20 hover:shadow-xl hover:shadow-brand-cobalt-blue/30 transition-all"
+              className="btn-primary text-base sm:text-lg px-6 sm:px-10 py-3 sm:py-4 inline-block shadow-lg shadow-brand-cobalt-blue/20 hover:shadow-xl hover:shadow-brand-cobalt-blue/30 transition-all"
             >
               Get Started
             </Link>
