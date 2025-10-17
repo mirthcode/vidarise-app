@@ -34,8 +34,21 @@ function CreateProfileContent() {
           .eq("id", user.id)
           .single();
 
-        // If admin, redirect to admin dashboard immediately
-        if (profile?.role === "admin") {
+        // If admin without complete profile, treat as mentor
+        if (profile?.role === "admin" && !profile.profile_completed) {
+          setRole("mentor");
+          setChecking(false);
+          const acknowledged = localStorage.getItem("program_expectations_acknowledged");
+          if (!acknowledged) {
+            setShowExpectations(true);
+          } else {
+            setHasAcknowledged(true);
+          }
+          return;
+        }
+
+        // If admin with complete profile, redirect to admin dashboard
+        if (profile?.role === "admin" && profile.profile_completed) {
           router.replace("/admin");
           return;
         }

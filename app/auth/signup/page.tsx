@@ -1,22 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-type UserRole = "mentor" | "student";
+type UserRole = "mentor" | "student" | "admin";
+
+interface Program {
+  id: string;
+  name: string;
+  description: string | null;
+  organization: string | null;
+  program_password: string | null;
+}
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<UserRole | "">("");
+  const [selectedProgram, setSelectedProgram] = useState("");
+  const [programPassword, setProgramPassword] = useState("");
+  const [programs, setPrograms] = useState<Program[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  // Fetch available programs when role is selected (mentor or student only)
+  useEffect(() => {
+    if (role === "mentor" || role === "student") {
+      fetchPrograms();
+    }
+  }, [role]);
+
+  const fetchPrograms = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("programs")
+        .select("id, name, description, organization, program_password")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setPrograms(data || []);
+    } catch (err) {
+      console.error("Error fetching programs:", err);
+    }
+  };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,8 +57,28 @@ export default function SignupPage() {
 
     // Validation
     if (!role) {
-      setError("Please select whether you're a mentor or student");
+      setError("Please select a role");
       return;
+    }
+
+    if ((role === "mentor" || role === "student") && !selectedProgram) {
+      setError("Please select a program to join");
+      return;
+    }
+
+    // Validate program password if the selected program requires one
+    if ((role === "mentor" || role === "student") && selectedProgram) {
+      const selectedProgramData = programs.find(p => p.id === selectedProgram);
+      if (selectedProgramData?.program_password) {
+        if (!programPassword) {
+          setError("This program requires a password");
+          return;
+        }
+        if (programPassword !== selectedProgramData.program_password) {
+          setError("Incorrect program password");
+          return;
+        }
+      }
     }
 
     if (password !== confirmPassword) {
@@ -63,6 +116,28 @@ export default function SignupPage() {
 
         if (profileError) throw profileError;
 
+        // If admin, create entry in admins table
+        if (role === "admin") {
+          const { error: adminError } = await supabase.from("admins").insert({
+            user_id: data.user.id,
+          });
+
+          if (adminError) throw adminError;
+        }
+
+        // If mentor or student, create program membership request
+        if (role === "mentor" || role === "student") {
+          const { error: membershipError } = await supabase
+            .from("program_memberships")
+            .insert({
+              program_id: selectedProgram,
+              user_id: data.user.id,
+              status: "pending",
+            });
+
+          if (membershipError) throw membershipError;
+        }
+
         // Show confirmation screen instead of redirecting
         setShowConfirmation(true);
       }
@@ -75,7 +150,12 @@ export default function SignupPage() {
 
   const handleGoogleSignup = async () => {
     if (!role) {
-      setError("Please select whether you're a mentor or student first");
+      setError("Please select a role first");
+      return;
+    }
+
+    if ((role === "mentor" || role === "student") && !selectedProgram) {
+      setError("Please select a program to join");
       return;
     }
 
@@ -83,8 +163,11 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      // Store role in localStorage to use after OAuth callback
+      // Store role and program in localStorage to use after OAuth callback
       localStorage.setItem("pending_role", role);
+      if (selectedProgram) {
+        localStorage.setItem("pending_program", selectedProgram);
+      }
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -159,7 +242,7 @@ export default function SignupPage() {
             {/* Role Selection */}
             <div>
               <label className="block text-sm font-medium mb-3">I am a...</label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setRole("student")}
@@ -169,10 +252,7 @@ export default function SignupPage() {
                       : "border-brand-slate-gray hover:border-brand-cobalt-blue/50"
                   }`}
                 >
-                  <div className="text-lg font-semibold mb-1">Student</div>
-                  <div className="text-xs text-brand-cool-gray">
-                    Seeking guidance
-                  </div>
+                  <div className="text-lg font-semibold">Student</div>
                 </button>
                 <button
                   type="button"
@@ -183,13 +263,76 @@ export default function SignupPage() {
                       : "border-brand-slate-gray hover:border-brand-cobalt-blue/50"
                   }`}
                 >
-                  <div className="text-lg font-semibold mb-1">Mentor</div>
-                  <div className="text-xs text-brand-cool-gray">
-                    Offering guidance
-                  </div>
+                  <div className="text-lg font-semibold">Mentor</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole("admin")}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    role === "admin"
+                      ? "border-brand-cobalt-blue bg-brand-cobalt-blue/10"
+                      : "border-brand-slate-gray hover:border-brand-cobalt-blue/50"
+                  }`}
+                >
+                  <div className="text-lg font-semibold">Admin</div>
                 </button>
               </div>
             </div>
+
+            {/* Program Selection (only for mentors and students) */}
+            {(role === "mentor" || role === "student") && (
+              <>
+                <div>
+                  <label htmlFor="program" className="block text-sm font-medium mb-2">
+                    Select Program
+                  </label>
+                  <select
+                    id="program"
+                    value={selectedProgram}
+                    onChange={(e) => {
+                      setSelectedProgram(e.target.value);
+                      setProgramPassword(""); // Reset password when changing programs
+                    }}
+                    className="input-field"
+                    required
+                  >
+                    <option value="">Choose a program...</option>
+                    {programs.map((program) => (
+                      <option key={program.id} value={program.id}>
+                        {program.name}
+                        {program.organization && ` - ${program.organization}`}
+                      </option>
+                    ))}
+                  </select>
+                  {programs.length === 0 && (
+                    <p className="text-xs text-brand-cool-gray mt-1">
+                      No active programs available. Please contact an administrator.
+                    </p>
+                  )}
+                </div>
+
+                {/* Program Password (only if selected program requires one) */}
+                {selectedProgram && programs.find(p => p.id === selectedProgram)?.program_password && (
+                  <div>
+                    <label htmlFor="programPassword" className="block text-sm font-medium mb-2">
+                      Program Password
+                    </label>
+                    <input
+                      id="programPassword"
+                      type="password"
+                      value={programPassword}
+                      onChange={(e) => setProgramPassword(e.target.value)}
+                      className="input-field"
+                      placeholder="Enter program password"
+                      required
+                    />
+                    <p className="text-xs text-brand-cool-gray mt-1">
+                      This program is password-protected. Contact your administrator for the password.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">

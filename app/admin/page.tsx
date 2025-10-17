@@ -59,6 +59,9 @@ export default async function AdminDashboardPage() {
             <Link href="/admin" className="text-brand-cobalt-blue">
               Dashboard
             </Link>
+            <Link href="/admin/programs" className="text-brand-cool-gray hover:text-white">
+              Programs
+            </Link>
             <Link href="/admin/matches" className="text-brand-cool-gray hover:text-white">
               Matches
             </Link>
@@ -147,8 +150,14 @@ export default async function AdminDashboardPage() {
             <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-3">
               <Link
-                href="/admin/matches/create"
+                href="/admin/programs"
                 className="block p-3 bg-brand-cobalt-blue hover:bg-brand-deep-blue rounded text-center font-semibold transition-colors"
+              >
+                Manage Programs
+              </Link>
+              <Link
+                href="/admin/matches/create"
+                className="block p-3 bg-brand-slate-gray hover:bg-brand-slate-gray/70 rounded text-center font-semibold transition-colors"
               >
                 Create Match
               </Link>
